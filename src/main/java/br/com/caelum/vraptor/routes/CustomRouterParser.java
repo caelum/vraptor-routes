@@ -1,4 +1,4 @@
-package br.com.caelum.vraptor.plugin;
+package br.com.caelum.vraptor.routes;
 
 import java.io.IOException;
 import java.lang.reflect.Method;
@@ -53,7 +53,8 @@ public class CustomRouterParser extends PathAnnotationRoutesParser {
 			String[] routes = new String[uris.length];
 			for (int i = 0; i < routes.length; i++) {
 				if(uris[i].matches("^\\{.*\\}$")) {
-					routes[i] = properties.getProperty(uris[i].replaceAll("\\{|\\}", ""));
+					String uri = uris[i].replaceAll("\\{|\\}", "");
+					routes[i] = properties.getProperty(uri);
 				} else {
 					routes[i] = uris[i];
 				}
