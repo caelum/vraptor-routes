@@ -1,4 +1,4 @@
-package br.com.caelum.vraptor.routes;
+package br.com.caelum.vraptor.plugin;
 
 import java.io.IOException;
 import java.lang.reflect.Method;
@@ -9,6 +9,7 @@ import javax.enterprise.inject.Specializes;
 import javax.inject.Inject;
 
 import br.com.caelum.vraptor.Path;
+import br.com.caelum.vraptor.environment.Property;
 import br.com.caelum.vraptor.http.route.PathAnnotationRoutesParser;
 import br.com.caelum.vraptor.http.route.Router;
 
@@ -16,6 +17,7 @@ import br.com.caelum.vraptor.http.route.Router;
 public class CustomRouterParser extends PathAnnotationRoutesParser {
 	
 	private Properties properties;
+	@Inject @Property private String routesFileName;
 
 	/**
 	 * @deprecated CDI eyes only
@@ -32,7 +34,13 @@ public class CustomRouterParser extends PathAnnotationRoutesParser {
 	public void postConstruct() {
 		properties = new Properties();
 		try {
-			properties.load(getClass().getResourceAsStream("/routes.properties"));
+			String routesname = null;
+			if(routesFileName != null) {
+				routesname = routesFileName;
+			}else{ 
+				routesname = "/routes.properties";
+			}
+			properties.load(getClass().getResourceAsStream(routesname));
 		} catch (IOException e) {
 			throw new RuntimeException("File routes.properties not found");
 		}
@@ -46,6 +54,8 @@ public class CustomRouterParser extends PathAnnotationRoutesParser {
 			for (int i = 0; i < routes.length; i++) {
 				if(uris[i].matches("^\\{.*\\}$")) {
 					routes[i] = properties.getProperty(uris[i].replaceAll("\\{|\\}", ""));
+				} else {
+					routes[i] = uris[i];
 				}
 			}
 			return routes;
