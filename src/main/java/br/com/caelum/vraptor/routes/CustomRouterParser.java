@@ -12,6 +12,7 @@ import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.environment.Property;
 import br.com.caelum.vraptor.http.route.PathAnnotationRoutesParser;
 import br.com.caelum.vraptor.http.route.Router;
+import br.com.caelum.vraptor.routes.annotation.Routed;
 
 @Specializes
 public class CustomRouterParser extends PathAnnotationRoutesParser {
@@ -48,20 +49,18 @@ public class CustomRouterParser extends PathAnnotationRoutesParser {
 	
 	@Override
 	protected String[] getURIsFor(Method javaMethod, Class<?> type) {
-		String[] uris = getRawUris(javaMethod);
-		if(uris.length > 0) {
-			String[] routes = new String[uris.length];
-			for (int i = 0; i < routes.length; i++) {
-				if(uris[i].matches("^\\{.*\\}$")) {
-					String uri = uris[i].replaceAll("\\{|\\}", "");
-					routes[i] = properties.getProperty(uri);
-				} else {
-					routes[i] = uris[i];
-				}
+		String[] uris = super.getURIsFor(javaMethod, type);
+		if(type.isAnnotationPresent(Routed.class) || javaMethod.isAnnotationPresent(Routed.class)) {
+			String[] routes = new String[uris.length+1];
+			String newPath = properties.getProperty(type.getSimpleName() + "." + javaMethod.getName());
+			routes[0] = newPath;
+			
+			for (int i = 0; i < uris.length; i++) {
+				routes[i + 1] = uris[i];
 			}
 			return routes;
 		}
-		return super.getURIsFor(javaMethod, type);
+		return uris;
 	}
 
 	private String[] getRawUris(Method javaMethod) {
