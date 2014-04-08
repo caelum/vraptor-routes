@@ -8,7 +8,6 @@ import javax.annotation.PostConstruct;
 import javax.enterprise.inject.Specializes;
 import javax.inject.Inject;
 
-import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.environment.Property;
 import br.com.caelum.vraptor.http.route.PathAnnotationRoutesParser;
 import br.com.caelum.vraptor.http.route.Router;
@@ -61,12 +60,5 @@ public class CustomRouterParser extends PathAnnotationRoutesParser {
 			return routes;
 		}
 		return uris;
-	}
-
-	private String[] getRawUris(Method javaMethod) {
-		if (javaMethod.isAnnotationPresent(Path.class)){
-			return javaMethod.getAnnotation(Path.class).value();
-		}
-		return getUris(javaMethod);
 	}
 }
