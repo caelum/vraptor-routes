@@ -1,8 +1,9 @@
 package br.com.caelum.vraptor.routes;
 
+import static org.junit.Assert.assertEquals;
+
 import java.lang.reflect.Method;
 
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -13,12 +14,12 @@ import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.http.route.Router;
-import br.com.caelum.vraptor.routes.CustomRouterParser;
+import br.com.caelum.vraptor.routes.annotation.Routed;
 
 @RunWith(MockitoJUnitRunner.class)
 public class CustomRouterParserTest {
 	
-	private static final Class<FakeController> clazz = FakeController.class;
+	private static final Class<?> clazz = FakeController.class;
 	
 	@Mock private Router router;
 	private CustomRouterParser parser;
@@ -30,33 +31,41 @@ public class CustomRouterParserTest {
 	}
 	
 	@Test
-	public void testName() throws Exception {
-		String[] urIsFor = parser.getURIsFor(getMethod("index3"), clazz);
-		Assert.assertEquals("/oie", urIsFor[0]);
+	public void shouldProcessCorrectlyNonAnnotatedClasses() throws Exception {
+		Class<?> clazz = AnotherFakeController.class;
+		Method method = clazz.getDeclaredMethod("mySimpleMethod");
+		String[] urIsFor = parser.getURIsFor(method, clazz);
+		assertEquals("/mySimplePath", urIsFor[0]);
 	}
+	
 	@Test
-	public void testName2() throws Exception {
-		String[] urIsFor = parser.getURIsFor(getMethod("index4"), clazz);
-		Assert.assertEquals("/liliurl", urIsFor[0]);
-		Assert.assertEquals("/lolourl", urIsFor[1]);
+	public void shoulAllowExtractRouteOfASingleMethod() throws Exception {
+		Class<?> clazz = AnotherFakeController.class;
+		Method method = clazz.getDeclaredMethod("myPostMethod");
+		String[] urIsFor = parser.getURIsFor(method, clazz);
+		assertEquals("/fake/custom/post", urIsFor[0]);
 	}
 	
+	@Test
+	public void shoulGetTheUrlAccordingToTheClassAndMethodName() throws Exception {
+		Method method = clazz.getDeclaredMethod("fakeMethod");
+		String[] urIsFor = parser.getURIsFor(method, clazz);
+		assertEquals("/fake/custom/path", urIsFor[0]);
+	}
+	
+	@Routed
 	static class FakeController {
-		
-		@Get("/lala")
-		public void index2() {
-		}
-		
-		@Path("{lele}")
-		public void index3() {
-		}
-		
-		@Post({"{lili}", "{lolo}"})
-		public void index4() {
+		@Get
+		public void fakeMethod() {
 		}
 	}
 	
-	private Method getMethod(String methodName) throws NoSuchMethodException {
-		return clazz.getDeclaredMethod(methodName);
+	static class AnotherFakeController {
+		@Path("/mySimplePath")
+		public void mySimpleMethod() {
+		}
+		@Post @Routed
+		public void myPostMethod() {
+		}
 	}
 }
