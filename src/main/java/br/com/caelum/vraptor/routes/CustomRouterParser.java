@@ -17,26 +17,26 @@ import br.com.caelum.vraptor.routes.annotation.Routed;
 @Specializes
 public class CustomRouterParser extends PathAnnotationRoutesParser {
 	
-	private Properties properties;
-	@Inject private Environment environment;
+	private Properties properties = new Properties();
+	private final Environment environment;
 	
 	/**
 	 * @deprecated CDI eyes only
 	 */
 	protected CustomRouterParser() {
+		this(null, null);
 	}
 	
 	@Inject
-	public CustomRouterParser(Router router) {
+	public CustomRouterParser(Router router, Environment environment) {
 		super(router);
+		this.environment = environment;
 	}
 	
 	@PostConstruct
 	public void postConstruct() {
-		properties = new Properties();
 		try {
 			String routesname = environment.get("routesFileName", "/routes.properties");
-			
 			properties.load(getClass().getResourceAsStream(routesname));
 		} catch (IOException e) {
 			throw new RuntimeException("File routes.properties not found");
