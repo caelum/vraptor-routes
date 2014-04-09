@@ -50,14 +50,8 @@ public class CustomRouterParser extends PathAnnotationRoutesParser {
 	protected String[] getURIsFor(Method javaMethod, Class<?> type) {
 		String[] uris = super.getURIsFor(javaMethod, type);
 		if(type.isAnnotationPresent(Routed.class) || javaMethod.isAnnotationPresent(Routed.class)) {
-			String[] routes = new String[uris.length+1];
 			String newPath = properties.getProperty(type.getSimpleName() + "." + javaMethod.getName());
-			routes[0] = newPath;
-			
-			for (int i = 0; i < uris.length; i++) {
-				routes[i + 1] = uris[i];
-			}
-			return routes;
+			return newPath.split("\\s*,\\s*");
 		}
 		return uris;
 	}
