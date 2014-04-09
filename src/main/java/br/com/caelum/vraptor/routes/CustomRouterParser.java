@@ -8,6 +8,7 @@ import javax.annotation.PostConstruct;
 import javax.enterprise.inject.Specializes;
 import javax.inject.Inject;
 
+import br.com.caelum.vraptor.environment.Environment;
 import br.com.caelum.vraptor.environment.Property;
 import br.com.caelum.vraptor.http.route.PathAnnotationRoutesParser;
 import br.com.caelum.vraptor.http.route.Router;
@@ -17,8 +18,8 @@ import br.com.caelum.vraptor.routes.annotation.Routed;
 public class CustomRouterParser extends PathAnnotationRoutesParser {
 	
 	private Properties properties;
-	@Inject @Property private String routesFileName;
-
+	@Inject private Environment environment;
+	
 	/**
 	 * @deprecated CDI eyes only
 	 */
@@ -34,12 +35,8 @@ public class CustomRouterParser extends PathAnnotationRoutesParser {
 	public void postConstruct() {
 		properties = new Properties();
 		try {
-			String routesname = null;
-			if(routesFileName != null) {
-				routesname = routesFileName;
-			}else{ 
-				routesname = "/routes.properties";
-			}
+			String routesname = environment.get("routesFileName", "/routes.properties");
+			
 			properties.load(getClass().getResourceAsStream(routesname));
 		} catch (IOException e) {
 			throw new RuntimeException("File routes.properties not found");
