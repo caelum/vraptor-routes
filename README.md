@@ -31,3 +31,15 @@ If you want to use other file you can also configure the file name on `environme
 ```
 routesFileName = routes_pt-BR.properties
 ```
+
+You can use the `@Route` annotation with methods containing priority normally, but you should leave the `@Path` value empty (plugin will always consider the routed url).
+
+```java
+@Routed
+@Path(priority=Path.HIGH, value="")
+public void myAmbiguousMethod(){ //... }
+```
+
+
+
+
