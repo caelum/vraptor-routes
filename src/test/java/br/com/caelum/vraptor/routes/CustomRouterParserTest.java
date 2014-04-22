@@ -30,8 +30,7 @@ public class CustomRouterParserTest {
 
 	@Before
 	public void setUp() {
-		when(environment.get(Mockito.eq("routesFileName"), Mockito.anyString())).thenReturn("/routes.properties");
-		parser = new CustomRouterParser(router, environment);
+		parser = new CustomRouterParser(router, "/routes.properties");
 		parser.postConstruct();
 	}
 	
