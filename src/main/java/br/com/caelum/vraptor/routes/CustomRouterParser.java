@@ -16,7 +16,7 @@ import br.com.caelum.vraptor.http.route.Router;
 import br.com.caelum.vraptor.routes.annotation.Routed;
 
 @Alternative
-@Priority(Interceptor.Priority.LIBRARY_AFTER)
+@Priority(Interceptor.Priority.LIBRARY_BEFORE+10)
 public class CustomRouterParser extends PathAnnotationRoutesParser {
 	
 	private Properties properties = new Properties();
