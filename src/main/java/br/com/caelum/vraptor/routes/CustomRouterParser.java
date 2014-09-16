@@ -5,16 +5,18 @@ import java.lang.reflect.Method;
 import java.util.Properties;
 
 import javax.annotation.PostConstruct;
-import javax.enterprise.inject.Specializes;
+import javax.annotation.Priority;
+import javax.enterprise.inject.Alternative;
 import javax.inject.Inject;
+import javax.interceptor.Interceptor;
 
 import br.com.caelum.vraptor.environment.Environment;
-import br.com.caelum.vraptor.environment.Property;
 import br.com.caelum.vraptor.http.route.PathAnnotationRoutesParser;
 import br.com.caelum.vraptor.http.route.Router;
 import br.com.caelum.vraptor.routes.annotation.Routed;
 
-@Specializes
+@Alternative
+@Priority(Interceptor.Priority.LIBRARY_AFTER)
 public class CustomRouterParser extends PathAnnotationRoutesParser {
 	
 	private Properties properties = new Properties();
