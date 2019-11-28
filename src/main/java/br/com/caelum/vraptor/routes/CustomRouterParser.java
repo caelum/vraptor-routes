@@ -10,6 +10,7 @@ import javax.enterprise.inject.Alternative;
 import javax.inject.Inject;
 import javax.interceptor.Interceptor;
 
+import br.com.caelum.vraptor.core.ReflectionProvider;
 import br.com.caelum.vraptor.environment.Environment;
 import br.com.caelum.vraptor.http.route.PathAnnotationRoutesParser;
 import br.com.caelum.vraptor.http.route.Router;
@@ -30,8 +31,8 @@ public class CustomRouterParser extends PathAnnotationRoutesParser {
 	}
 	
 	@Inject
-	public CustomRouterParser(Router router, Environment environment) {
-		super(router);
+	public CustomRouterParser(Router router, Environment environment, ReflectionProvider reflectionProvider) {
+		super(router, reflectionProvider);
 		this.environment = environment;
 	}
 	
